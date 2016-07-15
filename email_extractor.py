@@ -216,11 +216,52 @@ class EE(object):
             for co in clean:
                 email = {}
                 email['email'] = co
-                if co in unclean:
-                    email['obfuscation'] = 'False'
+                tmp_unclean = list(unclean)
+                # print co, tmp_unclean
+                if co in [username.strip() + "@" + domain.strip() for username, domain in tmp_unclean if domain and username]:
+                    # print co
+                    for tuc in tmp_unclean:
+                        username, domain = tuc
+                        tuc_string = username.strip() + "@" + domain.strip()
+                        if tuc_string == co:
+                            unclean.remove(tuc)
+                            continue
+                        domain = self.clean_domain(domain)
+                        username = EE.clean_username(username)
+                        if domain and username:
+                            email_string = username + "@" + domain
+                            if email_string == co:
+                                email['obfuscation'] = 'True'
+                    if 'obfuscation' not in email:
+                        email['obfuscation'] = 'False'
                 else:
+                    print 'ssss'
                     email['obfuscation'] = 'True'
                 output.append(email)
+            return output
+
+
+
+
+
+
+
+
+
+            # uc_tc = self.clean(unclean)
+            # for co in clean:
+            #     email = {}
+            #     email['email'] = co
+            #     if co in unclean:
+            #         for uo in uc_tc:
+            #             if co == uo:
+            #                 email['obfuscation'] = 'True'
+            #                 break
+            #         if obfuscation not in email:
+            #             email['obfuscation'] = 'False'
+            #     else:
+            #         email['obfuscation'] = 'True'
+            #     output.append(email)
             return output
 
     def extract_email(self, string, return_as_string=False):
@@ -239,9 +280,9 @@ class EE(object):
 
         matches = re.findall(self.email_regex, line)
         clean_results = self.clean(matches)
-        matches = [username.strip() + "@" + domain.strip() for username, domain in matches if domain and username]
+        # matches = [username.strip() + "@" + domain.strip() for username, domain in matches if domain and username]
         print '#'*20
-        print matches
+        print [username.strip() + "@" + domain.strip() for username, domain in matches if domain and username]
         print clean_results
         output = self.normalize(clean_results, matches, self.output_format)
         
@@ -253,6 +294,7 @@ class EE(object):
 
 if __name__ == '__main__':
     # text = 'Hey, \n \nWant some of this G-mail details  \nmarycomeaux62(@)gmail(dot)com\n'
+    # text = 'HOTMAIL:  sebasccelis@hotmail.com'
     # print EE(_output_format='obfuscation').extract_email(text)
     path = 'emails_ground_truth_obfuscation.json'
     with open(path) as gt_file:
@@ -269,10 +311,9 @@ if __name__ == '__main__':
             # print "as string: %s" % EE.extract_email(sentence, True)
             emails = EE(_output_format='obfuscation').extract_email(sentence)
             print '#'*10
-            print sentence
+            print sentence.encode('ascii', 'ignore')
             print '#'*10
             print emails
-            # print '#'*20
 
 """
 if __name__ == '__main__':
