@@ -15,7 +15,7 @@ class EE(object):
     EE_OUTPUT_FORMAT_LIST = 'list'
     EE_OUTPUT_FORMAT_OBFUSCATION = 'obfuscation'
 
-    def __init__(self, _output_format='obfuscation'):
+    def __init__(self, _output_format='list'):
 
         self.common_domains = [
             "gmail",
@@ -235,7 +235,6 @@ class EE(object):
                     if 'obfuscation' not in email:
                         email['obfuscation'] = 'False'
                 else:
-                    print 'ssss'
                     email['obfuscation'] = 'True'
                 output.append(email)
             return output
@@ -281,9 +280,9 @@ class EE(object):
         matches = re.findall(self.email_regex, line)
         clean_results = self.clean(matches)
         # matches = [username.strip() + "@" + domain.strip() for username, domain in matches if domain and username]
-        print '#'*20
-        print [username.strip() + "@" + domain.strip() for username, domain in matches if domain and username]
-        print clean_results
+        # print '#'*20
+        # print [username.strip() + "@" + domain.strip() for username, domain in matches if domain and username]
+        # print clean_results
         output = self.normalize(clean_results, matches, self.output_format)
         
         if return_as_string:
@@ -293,27 +292,27 @@ class EE(object):
 
 
 if __name__ == '__main__':
-    # text = 'Hey, \n \nWant some of this G-mail details  \nmarycomeaux62(@)gmail(dot)com\n'
-    # text = 'HOTMAIL:  sebasccelis@hotmail.com'
-    # print EE(_output_format='obfuscation').extract_email(text)
-    path = 'emails_ground_truth_obfuscation.json'
-    with open(path) as gt_file:
-        ground_truth = json.load(gt_file)
+    text = 'Hey, \n \nWant some of this G-mail details  \nmarycomeaux62(@)gmail(dot)com\n'
+    text = 'HOTMAIL:  sebasccelis@hotmail.com'
+    print EE(_output_format='obfuscation').extract_email(text)
+    # path = 'emails_ground_truth_obfuscation.json'
+    # with open(path) as gt_file:
+    #     ground_truth = json.load(gt_file)
 
-        correct = 0
-        incorrect = 0
-        not_recalled = 0
-        incorrectly_extracted = []
-        not_extracted = []
-        for r in ground_truth:
-            found = False
-            sentence = r["sentence"]
-            # print "as string: %s" % EE.extract_email(sentence, True)
-            emails = EE(_output_format='obfuscation').extract_email(sentence)
-            print '#'*10
-            print sentence.encode('ascii', 'ignore')
-            print '#'*10
-            print emails
+    #     correct = 0
+    #     incorrect = 0
+    #     not_recalled = 0
+    #     incorrectly_extracted = []
+    #     not_extracted = []
+    #     for r in ground_truth:
+    #         found = False
+    #         sentence = r["sentence"]
+    #         # print "as string: %s" % EE.extract_email(sentence, True)
+    #         emails = EE(_output_format='obfuscation').extract_email(sentence)
+    #         print '#'*10
+    #         print sentence.encode('ascii', 'ignore')
+    #         print '#'*10
+    #         print emails
 
 """
 if __name__ == '__main__':
